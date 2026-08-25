@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2732" height="2732" viewBox="0 0 2732 2732">
+  <defs>
+    <radialGradient id="bgS" cx="50%" cy="40%" r="75%">
+      <stop offset="0" stop-color="#101a2a"/>
+      <stop offset="0.55" stop-color="#0b0f14"/>
+      <stop offset="1" stop-color="#070a0f"/>
+    </radialGradient>
+    <linearGradient id="bg2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0d7a4d"/>
+      <stop offset="1" stop-color="#06412a"/>
+    </linearGradient>
+    <radialGradient id="shineW2" cx="30%" cy="30%" r="70%">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.55" stop-color="#e8eef4"/>
+      <stop offset="1" stop-color="#b7c3cf"/>
+    </radialGradient>
+    <radialGradient id="shineB2" cx="30%" cy="30%" r="70%">
+      <stop offset="0" stop-color="#3a3a42"/>
+      <stop offset="0.55" stop-color="#111117"/>
+      <stop offset="1" stop-color="#000000"/>
+    </radialGradient>
+    <filter id="shadow2" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="2732" height="2732" fill="url(#bgS)"/>
+
+  <g transform="translate(866,866)">
+    <rect x="0" y="0" width="1000" height="1000" rx="220" fill="url(#bg2)"/>
+    <g stroke="rgba(0,0,0,0.22)" stroke-width="4">
+      <path d="M500 94 V906 M94 500 H906"/>
+    </g>
+    <g filter="url(#shadow2)">
+      <circle cx="430" cy="430" r="230" fill="url(#shineW2)" stroke="rgba(0,0,0,0.18)" stroke-width="6"/>
+      <circle cx="590" cy="590" r="230" fill="url(#shineB2)" stroke="rgba(255,255,255,0.14)" stroke-width="6"/>
+    </g>
+  </g>
+
+  <text x="1366" y="2050" font-family="system-ui, Arial, sans-serif" font-size="120" font-weight="700" fill="#e6edf3" text-anchor="middle" letter-spacing="4">REVERSI</text>
+</svg>
