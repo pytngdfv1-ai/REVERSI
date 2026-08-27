@@ -140,6 +140,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
       border-radius: var(--r);
       box-shadow: var(--shadow);
       overflow:hidden;
+      position:relative;
     }
     .boardTop{
       padding:10px 12px;
@@ -280,10 +281,93 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     body.board-fullscreen #exitFsBtn{
       display:flex;
     }
+
+    /* ===== Game over banner ===== */
+    .go-overlay{
+      position:absolute;
+      inset:0;
+      z-index:50;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: rgba(4,10,8,.62);
+      backdrop-filter: blur(3px);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .22s ease;
+    }
+    .go-overlay.show{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .go-card{
+      min-width: 240px;
+      max-width: 88%;
+      text-align:center;
+      background: linear-gradient(180deg, rgba(22,30,26,.96), rgba(10,16,13,.98));
+      border:1px solid rgba(255,255,255,.16);
+      border-radius: 20px;
+      padding: 26px 28px 22px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.55);
+      transform: translateY(10px) scale(.96);
+      transition: transform .22s ease;
+    }
+    .go-overlay.show .go-card{
+      transform: translateY(0) scale(1);
+    }
+    .go-title{
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: .2px;
+      margin-bottom:6px;
+    }
+    .go-title.win{ color:#7CF6B0; }
+    .go-title.lose{ color:#FF9B9B; }
+    .go-title.draw{ color:#E6EDF3; }
+    .go-subtitle{
+      color: var(--muted);
+      font-size:14px;
+      margin-bottom:18px;
+    }
+    .go-subtitle b{ color: var(--text); }
+    .go-actions{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+    }
+    .go-actions button{
+      padding:10px 16px;
+    }
+
+    /* ===== Floating New Game button ===== */
+    #newGameFab{
+      display:none;
+      position:fixed;
+      right: max(16px, env(safe-area-inset-right));
+      bottom: max(16px, env(safe-area-inset-bottom));
+      z-index: 900;
+      align-items:center;
+      gap:8px;
+      padding:12px 18px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #2fbf7a, #1c8f58);
+      color:#04150c;
+      font-weight:800;
+      font-size:14px;
+      border:1px solid rgba(255,255,255,.25);
+      box-shadow: 0 10px 26px rgba(0,0,0,.45);
+    }
+    #newGameFab:active{ transform: translateY(1px); }
+    body.board-fullscreen #newGameFab{
+      display:flex;
+      right: max(16px, env(safe-area-inset-right));
+      bottom: max(16px, env(safe-area-inset-bottom));
+    }
   </style>
 </head>
 <body>
   <button id="exitFsBtn" title="Exit fullscreen">✕</button>
+  <button id="newGameFab" title="Nueva partida">⟳ Nuevo juego</button>
   <div class="wrap">
     <header>
       <h1><span class="dot"></span>Reversi</h1>
@@ -335,6 +419,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
           </div>
         </div>
         <canvas id="c" width="720" height="720"></canvas>
+
+        <div class="go-overlay" id="goOverlay">
+          <div class="go-card">
+            <div class="go-title" id="goTitle">¡Ganaste!</div>
+            <div class="go-subtitle" id="goSubtitle">Negro 34 – Blanco 30</div>
+            <div class="go-actions">
+              <button class="primary" id="goNewGameBtn">Nueva partida</button>
+              <button id="goCloseBtn">Cerrar</button>
+            </div>
+          </div>
+        </div>
       </section>
 
       <aside class="sideCard">
@@ -429,6 +524,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   const soundSel = document.getElementById("sound");
   const fsBtn = document.getElementById("fsBtn");
   const exitFsBtn = document.getElementById("exitFsBtn");
+  const newGameFab = document.getElementById("newGameFab");
+  const goOverlay = document.getElementById("goOverlay");
+  const goTitle = document.getElementById("goTitle");
+  const goSubtitle = document.getElementById("goSubtitle");
+  const goNewGameBtn = document.getElementById("goNewGameBtn");
+  const goCloseBtn = document.getElementById("goCloseBtn");
 
   // ====== Init ======
   resetGame();
@@ -604,6 +705,35 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     else sfx("draw");
     msg.innerHTML = `<b>Game Over.</b> ${text}<br><small>Black ${black} – White ${white}</small>`;
     status(`Game over: Black ${black} / White ${white}`);
+    showGameOverBanner(black, white);
+  }
+
+  function showGameOverBanner(black, white){
+    let titleText, titleClass, ficha;
+    if (black === white){
+      titleText = "Empate";
+      titleClass = "draw";
+      ficha = black;
+    } else if (mode === "ai"){
+      // Human always plays Black vs the AI (White)
+      const humanWon = black > white;
+      titleText = humanWon ? "¡Ganaste!" : "Perdiste";
+      titleClass = humanWon ? "win" : "lose";
+      ficha = humanWon ? black : white;
+    } else {
+      const blackWon = black > white;
+      titleText = blackWon ? "Ganó Negro" : "Ganó Blanco";
+      titleClass = "win";
+      ficha = blackWon ? black : white;
+    }
+    goTitle.textContent = titleText;
+    goTitle.className = "go-title " + titleClass;
+    goSubtitle.innerHTML = `Con <b>${ficha}</b> fichas.<br>Negro ${black} – Blanco ${white}`;
+    goOverlay.classList.add("show");
+  }
+
+  function hideGameOverBanner(){
+    goOverlay.classList.remove("show");
   }
 
   function turnName(p){
@@ -996,6 +1126,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
     fsBtn.addEventListener("click", () => enterBoardFullscreen());
     exitFsBtn.addEventListener("click", () => exitBoardFullscreen());
+    newGameFab.addEventListener("click", () => { hideGameOverBanner(); resetGame(); });
+    goNewGameBtn.addEventListener("click", () => { hideGameOverBanner(); resetGame(); });
+    goCloseBtn.addEventListener("click", () => hideGameOverBanner());
     document.addEventListener("fullscreenchange", onFsChange);
     document.addEventListener("webkitfullscreenchange", onFsChange);
     window.addEventListener("keydown", (e) => {
@@ -1120,6 +1253,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     turn = last.turn;
     gameOver = last.gameOver;
 
+    hideGameOverBanner();
     updateCounts();
     status("Undo.");
     sfx("undo");
@@ -1132,6 +1266,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     board = makeBoard();
     turn = BLACK;
     gameOver = false;
+    hideGameOverBanner();
     updateCounts();
     if (showMsg){
       msg.innerHTML = `<b>Quick rule:</b> Place a disc to <i>bracket</i> opponent discs — then they flip.
