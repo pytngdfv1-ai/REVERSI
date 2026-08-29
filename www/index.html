@@ -1264,13 +1264,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   function resetGame(showMsg=true){
     history = [];
     board = makeBoard();
-    turn = BLACK;
+    turn = (Math.random() < 0.5) ? BLACK : WHITE;
     gameOver = false;
     hideGameOverBanner();
     updateCounts();
     if (showMsg){
+      const starter = (turn === BLACK) ? "Black" : "White";
       msg.innerHTML = `<b>Quick rule:</b> Place a disc to <i>bracket</i> opponent discs — then they flip.
-      <br><small>If no move is possible, the turn is passed automatically.</small>`;
+      <br><small>${starter} moves first. If no move is possible, the turn is passed automatically.</small>`;
     }
     status("New game.");
     sfx("toggle");
