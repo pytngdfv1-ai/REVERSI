@@ -140,6 +140,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
       border-radius: var(--r);
       box-shadow: var(--shadow);
       overflow:hidden;
+      position:relative;
     }
     .boardTop{
       padding:10px 12px;
@@ -280,10 +281,202 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     body.board-fullscreen #exitFsBtn{
       display:flex;
     }
+
+    /* ===== Game over banner ===== */
+    .go-overlay{
+      position:absolute;
+      inset:0;
+      z-index:50;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: rgba(4,10,8,.62);
+      backdrop-filter: blur(3px);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .22s ease;
+    }
+    .go-overlay.show{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .go-card{
+      min-width: 240px;
+      max-width: 88%;
+      text-align:center;
+      background: linear-gradient(180deg, rgba(22,30,26,.96), rgba(10,16,13,.98));
+      border:1px solid rgba(255,255,255,.16);
+      border-radius: 20px;
+      padding: 26px 28px 22px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.55);
+      transform: translateY(10px) scale(.96);
+      transition: transform .22s ease;
+    }
+    .go-overlay.show .go-card{
+      transform: translateY(0) scale(1);
+    }
+    .go-title{
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: .2px;
+      margin-bottom:6px;
+    }
+    .go-title.win{ color:#7CF6B0; }
+    .go-title.lose{ color:#FF9B9B; }
+    .go-title.draw{ color:#E6EDF3; }
+    .go-subtitle{
+      color: var(--muted);
+      font-size:14px;
+      margin-bottom:18px;
+    }
+    .go-subtitle b{ color: var(--text); }
+    .go-actions{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+    }
+    .go-actions button{
+      padding:10px 16px;
+    }
+
+    /* ===== Floating New Game button ===== */
+    #newGameFab{
+      display:none;
+      position:fixed;
+      right: max(16px, env(safe-area-inset-right));
+      bottom: max(16px, env(safe-area-inset-bottom));
+      z-index: 900;
+      align-items:center;
+      gap:8px;
+      padding:12px 18px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #2fbf7a, #1c8f58);
+      color:#04150c;
+      font-weight:800;
+      font-size:14px;
+      border:1px solid rgba(255,255,255,.25);
+      box-shadow: 0 10px 26px rgba(0,0,0,.45);
+    }
+    #newGameFab:active{ transform: translateY(1px); }
+    body.board-fullscreen #newGameFab{
+      display:flex;
+      right: max(16px, env(safe-area-inset-right));
+      bottom: max(16px, env(safe-area-inset-bottom));
+    }
+
+    /* ===== Timer ===== */
+    #gameTimer{
+      position:absolute;
+      top:10px;
+      left:10px;
+      z-index:40;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:12px;
+      padding:5px 10px;
+      border-radius:999px;
+      background: rgba(0,0,0,.32);
+      border:1px solid rgba(255,255,255,.14);
+      color: rgba(230,237,243,.85);
+      opacity:.85;
+      pointer-events:none;
+    }
+
+    /* ===== Records button ===== */
+    #recordsBtn{
+      position:fixed;
+      left: max(16px, env(safe-area-inset-left));
+      bottom: max(16px, env(safe-area-inset-bottom));
+      z-index: 900;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      padding:10px 14px;
+      border-radius:999px;
+      background: rgba(20,26,22,.55);
+      color: var(--text);
+      font-weight:700;
+      font-size:13px;
+      border:1px solid rgba(255,255,255,.16);
+      backdrop-filter: blur(4px);
+    }
+    #recordsBtn:active{ transform: translateY(1px); }
+
+    /* ===== Records panel ===== */
+    #recordsPanel{
+      position:fixed;
+      inset:0;
+      z-index:1200;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background: rgba(4,10,8,.55);
+      backdrop-filter: blur(3px);
+      padding:20px;
+    }
+    #recordsPanel.show{ display:flex; }
+    .rp-card{
+      width:100%;
+      max-width:480px;
+      max-height:80vh;
+      overflow:auto;
+      background: rgba(15,22,18,.82);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:18px;
+      padding:18px 18px 14px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.5);
+    }
+    .rp-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:10px;
+    }
+    .rp-head h3{ margin:0; font-size:17px; }
+    .rp-close{
+      padding:6px 12px;
+      font-size:13px;
+    }
+    table.rp-table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px;
+    }
+    table.rp-table th, table.rp-table td{
+      padding:7px 6px;
+      text-align:left;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    table.rp-table th{
+      color:var(--muted);
+      font-weight:600;
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.03em;
+    }
+    table.rp-table tr:first-child td{ color:#7CF6B0; font-weight:700; }
+    .rp-empty{
+      color:var(--muted);
+      text-align:center;
+      padding:20px 0;
+      font-size:13px;
+    }
   </style>
 </head>
 <body>
   <button id="exitFsBtn" title="Exit fullscreen">✕</button>
+  <button id="newGameFab" title="Nueva partida">⟳ Nuevo juego</button>
+  <button id="recordsBtn" title="Récords">🏆 Récords</button>
+
+  <div id="recordsPanel">
+    <div class="rp-card">
+      <div class="rp-head">
+        <h3>🏆 Récords</h3>
+        <button class="rp-close" id="recordsCloseBtn">Cerrar</button>
+      </div>
+      <div id="recordsBody"></div>
+    </div>
+  </div>
+
   <div class="wrap">
     <header>
       <h1><span class="dot"></span>Reversi</h1>
@@ -335,6 +528,18 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
           </div>
         </div>
         <canvas id="c" width="720" height="720"></canvas>
+        <div id="gameTimer">00:00</div>
+
+        <div class="go-overlay" id="goOverlay">
+          <div class="go-card">
+            <div class="go-title" id="goTitle">¡Ganaste!</div>
+            <div class="go-subtitle" id="goSubtitle">Negro 34 – Blanco 30</div>
+            <div class="go-actions">
+              <button class="primary" id="goNewGameBtn">Nueva partida</button>
+              <button id="goCloseBtn">Cerrar</button>
+            </div>
+          </div>
+        </div>
       </section>
 
       <aside class="sideCard">
@@ -429,6 +634,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   const soundSel = document.getElementById("sound");
   const fsBtn = document.getElementById("fsBtn");
   const exitFsBtn = document.getElementById("exitFsBtn");
+  const newGameFab = document.getElementById("newGameFab");
+  const gameTimerEl = document.getElementById("gameTimer");
+  const recordsBtn = document.getElementById("recordsBtn");
+  const recordsPanel = document.getElementById("recordsPanel");
+  const recordsCloseBtn = document.getElementById("recordsCloseBtn");
+  const recordsBody = document.getElementById("recordsBody");
+  const goOverlay = document.getElementById("goOverlay");
+  const goTitle = document.getElementById("goTitle");
+  const goSubtitle = document.getElementById("goSubtitle");
+  const goNewGameBtn = document.getElementById("goNewGameBtn");
+  const goCloseBtn = document.getElementById("goCloseBtn");
 
   // ====== Init ======
   resetGame();
@@ -604,6 +820,135 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     else sfx("draw");
     msg.innerHTML = `<b>Game Over.</b> ${text}<br><small>Black ${black} – White ${white}</small>`;
     status(`Game over: Black ${black} / White ${white}`);
+    stopTimer();
+    if (mode === "ai" && black > white){
+      saveRecord(black, elapsedMs());
+    }
+    showGameOverBanner(black, white);
+  }
+
+  /* ===== Timer ===== */
+  let timerInterval = null;
+  let timerStart = 0;
+  let timerElapsedFrozen = 0;
+
+  function startTimer(){
+    stopTimer();
+    timerStart = Date.now();
+    timerElapsedFrozen = 0;
+    updateTimerDisplay(0);
+    timerInterval = setInterval(() => updateTimerDisplay(Date.now() - timerStart), 1000);
+  }
+
+  function stopTimer(){
+    if (timerInterval){
+      timerElapsedFrozen = Date.now() - timerStart;
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  }
+
+  function elapsedMs(){
+    return timerInterval ? (Date.now() - timerStart) : timerElapsedFrozen;
+  }
+
+  function updateTimerDisplay(ms){
+    const totalSec = Math.floor(ms / 1000);
+    const m = String(Math.floor(totalSec / 60)).padStart(2, "0");
+    const s = String(totalSec % 60).padStart(2, "0");
+    gameTimerEl.textContent = `${m}:${s}`;
+  }
+
+  /* ===== Records ===== */
+  const RECORDS_KEY = "reversi_records_v1";
+
+  function loadRecords(){
+    try {
+      const raw = localStorage.getItem(RECORDS_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch(e){ return []; }
+  }
+
+  function saveRecord(fichas, timeMs){
+    try {
+      const records = loadRecords();
+      records.push({
+        date: new Date().toISOString(),
+        fichas,
+        timeMs: Math.max(0, Math.round(timeMs))
+      });
+      records.sort((a, b) => a.timeMs - b.timeMs);
+      const top10 = records.slice(0, 10);
+      localStorage.setItem(RECORDS_KEY, JSON.stringify(top10));
+    } catch(e){}
+  }
+
+  function formatRecordTime(ms){
+    const totalSec = Math.floor(ms / 1000);
+    const m = String(Math.floor(totalSec / 60)).padStart(2, "0");
+    const s = String(totalSec % 60).padStart(2, "0");
+    return `${m}:${s}`;
+  }
+
+  function formatRecordDate(iso){
+    try {
+      const d = new Date(iso);
+      const date = d.toLocaleDateString();
+      const time = d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+      return `${date} ${time}`;
+    } catch(e){ return iso; }
+  }
+
+  function openRecordsPanel(){
+    const records = loadRecords();
+    if (!records.length){
+      recordsBody.innerHTML = `<div class="rp-empty">Todavía no hay partidas ganadas registradas.</div>`;
+    } else {
+      let rows = records.map(r => `
+        <tr>
+          <td>${formatRecordDate(r.date)}</td>
+          <td>${r.fichas}</td>
+          <td>${formatRecordTime(r.timeMs)}</td>
+        </tr>
+      `).join("");
+      recordsBody.innerHTML = `
+        <table class="rp-table">
+          <thead>
+            <tr><th>Fecha y hora</th><th>Fichas</th><th>Tiempo</th></tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+    recordsPanel.classList.add("show");
+  }
+
+  function showGameOverBanner(black, white){
+    let titleText, titleClass, ficha;
+    if (black === white){
+      titleText = "Empate";
+      titleClass = "draw";
+      ficha = black;
+    } else if (mode === "ai"){
+      // Human always plays Black vs the AI (White)
+      const humanWon = black > white;
+      titleText = humanWon ? "¡Ganaste!" : "Perdiste";
+      titleClass = humanWon ? "win" : "lose";
+      ficha = humanWon ? black : white;
+    } else {
+      const blackWon = black > white;
+      titleText = blackWon ? "Ganó Negro" : "Ganó Blanco";
+      titleClass = "win";
+      ficha = blackWon ? black : white;
+    }
+    goTitle.textContent = titleText;
+    goTitle.className = "go-title " + titleClass;
+    goSubtitle.innerHTML = `Con <b>${ficha}</b> fichas.<br>Negro ${black} – Blanco ${white}`;
+    goOverlay.classList.add("show");
+  }
+
+  function hideGameOverBanner(){
+    goOverlay.classList.remove("show");
   }
 
   function turnName(p){
@@ -996,6 +1341,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
     fsBtn.addEventListener("click", () => enterBoardFullscreen());
     exitFsBtn.addEventListener("click", () => exitBoardFullscreen());
+    newGameFab.addEventListener("click", () => { hideGameOverBanner(); resetGame(); });
+    recordsBtn.addEventListener("click", () => openRecordsPanel());
+    recordsCloseBtn.addEventListener("click", () => recordsPanel.classList.remove("show"));
+    recordsPanel.addEventListener("click", (e) => { if (e.target === recordsPanel) recordsPanel.classList.remove("show"); });
+    goNewGameBtn.addEventListener("click", () => { hideGameOverBanner(); resetGame(); });
+    goCloseBtn.addEventListener("click", () => hideGameOverBanner());
     document.addEventListener("fullscreenchange", onFsChange);
     document.addEventListener("webkitfullscreenchange", onFsChange);
     window.addEventListener("keydown", (e) => {
@@ -1120,6 +1471,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     turn = last.turn;
     gameOver = last.gameOver;
 
+    hideGameOverBanner();
+    if (!gameOver && !timerInterval){
+      // Resume the clock (undo reverted a finished game) without losing elapsed time.
+      timerStart = Date.now() - timerElapsedFrozen;
+      timerInterval = setInterval(() => updateTimerDisplay(Date.now() - timerStart), 1000);
+    }
     updateCounts();
     status("Undo.");
     sfx("undo");
@@ -1130,12 +1487,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   function resetGame(showMsg=true){
     history = [];
     board = makeBoard();
-    turn = BLACK;
+    turn = (Math.random() < 0.5) ? BLACK : WHITE;
     gameOver = false;
+    hideGameOverBanner();
+    startTimer();
     updateCounts();
     if (showMsg){
+      const starter = (turn === BLACK) ? "Black" : "White";
       msg.innerHTML = `<b>Quick rule:</b> Place a disc to <i>bracket</i> opponent discs — then they flip.
-      <br><small>If no move is possible, the turn is passed automatically.</small>`;
+      <br><small>${starter} moves first. If no move is possible, the turn is passed automatically.</small>`;
     }
     status("New game.");
     sfx("toggle");
