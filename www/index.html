@@ -608,6 +608,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   let diff = "normal";
   let hintsOn = true;
   let gameOver = false;
+  let timerInterval = null;
+  let timerStart = 0;
+  let timerElapsedFrozen = 0;
   let hoverCell = null; // {r,c} for hover highlight (desktop)
   let soundOn = true;
 
@@ -828,10 +831,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   }
 
   /* ===== Timer ===== */
-  let timerInterval = null;
-  let timerStart = 0;
-  let timerElapsedFrozen = 0;
-
   function startTimer(){
     stopTimer();
     timerStart = Date.now();
